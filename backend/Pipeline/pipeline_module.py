@@ -7,7 +7,6 @@ class PreprocessingTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, tokenizer_path = r'D:/Projects/Sentiment Analysis using BERT/backend/Pipeline/bert-sentiment-tokenizer'):
         self.tokenizer_path = tokenizer_path
         self.tokenizer = BertTokenizer.from_pretrained(self.tokenizer_path)
-        self.encoded_data = None
     
     def fit(self, X, y=None):
         return self
@@ -16,11 +15,11 @@ class PreprocessingTransformer(BaseEstimator, TransformerMixin):
         X = [X.strip()]
         X_lower = [text.lower() for text in X]  
         encoded = self.tokenizer(X_lower, padding=True, truncation=True, max_length = 128, return_tensors = 'tf')
-        self.encoded_data = {
+        encoded_data = {
                 'input_ids': encoded['input_ids'],
                 'attention_mask': encoded['attention_mask']
         }
-        return self.encoded_data
+        return encoded_data
     
 class SentimentPredictor(BaseEstimator):
     def __init__(self, model_path = r'D:/Projects/Sentiment Analysis using BERT/backend/Pipeline/bert-sentiment-analysis'):
