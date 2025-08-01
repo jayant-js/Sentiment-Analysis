@@ -1,12 +1,24 @@
 import streamlit as st
 import requests
+from fastapi import HTTPException
 
-text = st.input_text('Give your review here')
-if text:
-    if st.button():
-        response = requests.post(f'http://localhost:8000/input-text/{text}')
-        if response.status_code == 200:
-            sentiment = requests.get('http://localhost:8000/get-sentiment')
-            if sentiment == 1:
-                
-
+text = st.text_input('Give your review here')
+if st.button('Predict'):
+    if text:
+        with st.spinner('Preprocessing the Input...'):
+            response = requests.post(f'http://localhost:8000/input-text', json={'text': text})
+            if response.status_code == 200: 
+                with st.spinner('Getting sentiment...'):
+                    response = requests.get('http://localhost:8000/get-sentiment')
+                    if response.status_code == 200:
+                        sentiment = response.json().get('sentiment')
+                        if sentiment == 1:
+                            st.write('Positive')
+                        elif sentiment == 0:
+                            st.write('Negative')
+                    else:
+                        raise HTTPException(status_code=500)
+            else:
+                raise HTTPException(status_code=500)
+    else:
+        raise ValueError('Give correct input')

@@ -1,7 +1,12 @@
 from fastapi import FastAPI, Path
 from Pipeline.pipeline_module import create_pipeline
+from pydantic import BaseModel, Field
+from typing import Annotated
 
 app = FastAPI()
+
+class TextInput(BaseModel):
+    text: Annotated[str, Field(..., min_length=2)]
 
 @app.on_event('startup')
 def load_pipeline():
@@ -9,10 +14,10 @@ def load_pipeline():
     sentiment_pipeline = create_pipeline()
     sentiment_pipeline.fit('dummy input')
 
-@app.post('/input-text/{text}')
-def get_text(text: str = Path(..., description='Please provide the movie review', min_length=1)):
+@app.post('/input-text')
+def get_text(text: TextInput):  
     global sentiment_pipeline
-    sentiment_pipeline.named_steps['preprocessing'].transform(text)
+    sentiment_pipeline.named_steps['preprocessing'].transform(text.text)
     return {'message':'Text preprocessed sucessfully'}
 
 @app.get('/get-sentiment')
