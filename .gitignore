@@ -1,4 +1,12 @@
+# Python-generated files
+__pycache__/
+*.pyc
+
+# Virtual Environment
+.venv   
+
 Other Notebooks
-sentiment-analysis
 Dataset
-backend/Pipeline/bert-sentiment-analysis/tf_model.h5
+src/pipeline/bert-sentiment-analysis/tf_model.h5
+src/pipeline/roberta-sentiment-analysis
+src/pipeline/roberta-sentiment-tokenizer
